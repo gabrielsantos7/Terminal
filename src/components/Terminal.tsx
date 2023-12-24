@@ -1,6 +1,9 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Username from './Username';
 
+import { commands } from '../commands';
+import { findCommand } from '../helper';
+
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
   const [history, setHistory] = useState<string[]>([]);
@@ -25,7 +28,16 @@ const Terminal = () => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
-      setHistory((prevHistory) => [...prevHistory, inputText.trim()]);
+      const trimmedInput = inputText.trim()
+      const matchedCommand = findCommand(trimmedInput);
+
+    if (matchedCommand) {
+      matchedCommand.action();
+    } else {
+      console.log(`Comando '${inputText}' não reconhecido.`);
+    }
+      setHistory((prevHistory) => [...prevHistory, trimmedInput]);
+      
       setInputText('');
     }
   };
