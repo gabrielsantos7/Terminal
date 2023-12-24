@@ -1,32 +1,43 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 const Terminal = () => {
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState<string>('');
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const { key } = event;
-
-      if (key === 'Backspace') {
-        setInputText((prevText) => prevText.slice(0, -1));
-      } else if (key === 'Enter') {
-        setInputText((prevText) => prevText + '\n');
-      } else {
-        setInputText((prevText) => prevText + key);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
+    setTimeout(() => {
+      textareaFocus();
+    }, 50);
   }, []);
 
+  const textareaFocus = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const text = event.target.value;
+    text.length <=20 && setInputText(text);
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter') {
+      console.log(inputText);
+      setInputText('');
+    }
+  };
+
   return (
-    <div id='terminal-container'>
+    <div id='terminal-container' onClick={textareaFocus}>
       <p>Pressione qualquer tecla para simular o terminal:</p>
       {inputText}
+      <textarea
+        ref={textAreaRef}
+        value={inputText}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
+      />
     </div>
   );
 };
