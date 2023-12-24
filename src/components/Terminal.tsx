@@ -1,4 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import Username from './Username';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
@@ -19,7 +20,7 @@ const Terminal = () => {
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const text = event.target.value;
-    text.length <= 20 && setInputText(text);
+    text.length <= 30 && setInputText(text);
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -40,25 +41,15 @@ const Terminal = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
       />
-      {/* <span id='username'>
-        visitor@terminal.com:<span className='color-main-blue'>~</span>
-        <span className='color-white'>$</span>
-      </span>
-      <span className='color-white'>{inputText}</span> <span id='typer'></span> */}
-      {/* Exibir histórico de comandos */}
+      
       {history.map((command, index) => (
         <div key={index}>
-          <span className='username'>
-            visitor@terminal.com:<span className='color-main-blue'>~</span>
-            <span className='color-white'>$</span>
-          </span>
+          <Username />
           <span className='color-white'>{command}</span>
         </div>
       ))}
-      <span className='username'>
-        visitor@terminal.com:<span className='color-main-blue'>~</span>
-        <span className='color-white'>$</span>
-      </span>
+
+      <Username />
       <span className='color-white'>{!!inputText.length ? inputText.trim() : inputText}</span> <span id='typer'></span>
     </div>
   );
