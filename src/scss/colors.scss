@@ -2,3 +2,24 @@ $bg-color: #0c0c0c;
 $main-yellow: #dbd492;
 $main-red: #f1184c;
 $main-green: #518A55;
+$main-blue: #6491CC;
+
+.color-main-yellow {
+  color: $main-yellow;
+}
+
+.color-main-red {
+  color: $main-red;
+}
+
+.color-main-green {
+  color: $main-green;
+}
+
+.color-main-blue {
+  color: $main-blue;
+}
+
+.color-white {
+  color: white;
+}

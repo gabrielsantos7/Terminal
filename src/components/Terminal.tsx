@@ -18,7 +18,7 @@ const Terminal = () => {
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const text = event.target.value;
-    text.length <=20 && setInputText(text);
+    text.length <= 20 && setInputText(text);
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -30,14 +30,20 @@ const Terminal = () => {
 
   return (
     <div id='terminal-container' onClick={textareaFocus}>
-      <p>Pressione qualquer tecla para simular o terminal:</p>
-      {inputText}
+      <p className='color-main-yellow'>
+        Pressione qualquer tecla para simular o terminal:
+      </p>
       <textarea
         ref={textAreaRef}
         value={inputText}
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
       />
+      <span id='username'>
+        visitor@terminal.com:<span className='color-main-blue'>~</span>
+        <span className='color-white'>$</span>
+      </span>{' '}
+      <span className='color-white'>{inputText}</span> <span id='typer'></span>
     </div>
   );
 };
