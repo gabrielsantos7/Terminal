@@ -1,0 +1,37 @@
+@import 'scss/colors.scss';
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  width: 100%;
+  height: auto;
+  padding: 15px 20px;
+  min-height: 99%;
+  width: 100%;
+  min-width: 550px;
+  color: $main-green;
+  background-color: $bg-color;
+  font-family: cursor, monospace;
+  overflow-x: hidden;
+}
