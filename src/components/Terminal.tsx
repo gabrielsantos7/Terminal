@@ -3,10 +3,13 @@ import Username from './Username';
 
 import { findCommand } from '../helper';
 import Help from './CommandResponses/Help';
+import NotFound from './CommandResponses/NotFound';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [history, setHistory] = useState<{ command: string; response: JSX.Element | null }[]>([]);
+  const [history, setHistory] = useState<
+    { command: string; response: JSX.Element | null }[]
+  >([]);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -28,25 +31,34 @@ const Terminal = () => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
-      const trimmedInput = inputText.trim()
+      const trimmedInput = inputText.trim();
       const matchedCommand = findCommand(trimmedInput);
 
       if (matchedCommand) {
-
         switch (matchedCommand) {
           case 'help':
-            setHistory((prevHistory) => [...prevHistory, { command: trimmedInput, response: <Help /> }]);
+            setHistory((prevHistory) => [
+              ...prevHistory,
+              { command: trimmedInput, response: <Help /> },
+            ]);
             break;
 
           default:
-            setHistory((prevHistory) => [...prevHistory, { command: trimmedInput, response: null }]);
+            setHistory((prevHistory) => [
+              ...prevHistory,
+              { command: trimmedInput, response: null },
+            ]);
             break;
         }
 
-        setInputText('');
       } else {
-        console.log(`Comando '${inputText}' não reconhecido.`);
+        setHistory((prevHistory) => [
+          ...prevHistory,
+          { command: trimmedInput, response: <NotFound /> },
+        ]);
       }
+
+      setInputText('');
     }
   };
 
@@ -61,7 +73,6 @@ const Terminal = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
       />
-
       {/* Histórico de comandos e respostas */}
       {history.map((item, index) => (
         <div key={index}>
@@ -70,10 +81,12 @@ const Terminal = () => {
           {item.response && <span>{item.response}</span>}
         </div>
       ))}
-
       {/* Último comando digitado */}
       <Username />
-      <span className='color-white'>{!!inputText.length ? inputText.trim() : inputText}</span> <span id='typer'></span>
+      <span className='color-white'>
+        {!!inputText.length ? inputText.trim() : inputText}
+      </span>{' '}
+      <span id='typer'></span>
     </div>
   );
 };
