@@ -43,6 +43,10 @@ const Terminal = () => {
             ]);
             break;
 
+          case 'clear':
+            setHistory([]);
+            break;
+
           default:
             setHistory((prevHistory) => [
               ...prevHistory,
@@ -50,7 +54,6 @@ const Terminal = () => {
             ]);
             break;
         }
-
       } else {
         setHistory((prevHistory) => [
           ...prevHistory,
