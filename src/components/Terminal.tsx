@@ -88,7 +88,7 @@ const Terminal = () => {
   return (
     <div id='terminal-container' onClick={textareaFocus}>
       <p className='color-main-yellow'>
-        Pressione qualquer tecla para simular o terminal:
+      Web Terminal project © 2024. All right reserved.
       </p>
       <textarea
         ref={textAreaRef}
