@@ -2,6 +2,7 @@
 
 #terminal-container {
   font-size: 2rem;
+  padding-bottom: 10rem;
 }
 
 textarea {
@@ -26,14 +27,11 @@ textarea {
   }
 }
 
-.username {
-  margin-right: 1rem;
-}
-
 .response {
   padding: 1rem 0;
 }
 
-.datetime {
+.datetime, .username, .project-description {
   padding-right: 1.5rem;
 }
+

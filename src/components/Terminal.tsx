@@ -6,6 +6,7 @@ import NotFound from './CommandResponses/NotFound';
 import Banner from './CommandResponses/Banner';
 import Whois from './CommandResponses/Whois';
 import { ICommandHistory } from '../models';
+import Projects from './CommandResponses/Projects';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
@@ -31,7 +32,7 @@ const Terminal = () => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
-      const trimmedInput = inputText.trim();
+      const trimmedInput = inputText.trim().toLowerCase();
       const timestamp = getCurrentTime(); // Obtém a data e hora atual
   
       if (trimmedInput) {
@@ -54,6 +55,8 @@ const Terminal = () => {
         return <Banner />;
       case 'whois':
         return <Whois />;
+      case 'projects':
+        return <Projects />;
       default:
         return <NotFound />;
     }
@@ -90,7 +93,7 @@ const Terminal = () => {
         onKeyDown={handleKeyPress}
         autoFocus
       />
-      
+
       {/* Histórico de comandos e respostas */}
       {history.map((item, index) => (
         <div key={index}>
