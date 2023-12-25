@@ -33,44 +33,50 @@ const Terminal = () => {
     if (event.key === 'Enter') {
       const trimmedInput = inputText.trim();
       const timestamp = getCurrentTime(); // Obtém a data e hora atual
-
+  
       if (trimmedInput) {
-        let response: JSX.Element | null = null;
-        const matchedCommand = findCommand(trimmedInput);
-
-        switch (matchedCommand) {
-          case 'help':
-            response = <Help />;
-            break;
-          case 'clear':
-            setHistory([]);
-            break;
-          case 'banner':
-            response = <Banner />;
-            break;
-          case 'whois':
-            response = <Whois />;
-            break;
-          default:
-            response = <NotFound />;
-            break;
-        }
-
-        const commandObj: ICommandHistory = {
-          command: trimmedInput,
-          response,
-          timestamp,
-        };
-
-        setHistory((prevHistory) => [...prevHistory, commandObj]);
-        setInputText('');
-
-        setTimeout(() => {
-          window.scrollTo(0, document.body.offsetHeight);
-        }, 50);
+        const response = getCommandResponse(trimmedInput);
+        addToHistory(trimmedInput, response, timestamp);
+      } else {
+        addToHistory(trimmedInput, null, timestamp);
       }
     }
   };
+  
+  const getCommandResponse = (command: string): JSX.Element | null => {
+    switch (findCommand(command)) {
+      case 'help':
+        return <Help />;
+      case 'clear':
+        setHistory([]);
+        return null;
+      case 'banner':
+        return <Banner />;
+      case 'whois':
+        return <Whois />;
+      default:
+        return <NotFound />;
+    }
+  };
+  
+  const addToHistory = (
+    command: string,
+    response: JSX.Element | null,
+    timestamp: string
+  ) => {
+    const commandObj: ICommandHistory = {
+      command,
+      response,
+      timestamp,
+    };
+  
+    setHistory((prevHistory) => [...prevHistory, commandObj]);
+    setInputText('');
+  
+    setTimeout(() => {
+      window.scrollTo(0, document.body.offsetHeight);
+    }, 50);
+  };  
 
   return (
     <div id='terminal-container' onClick={textareaFocus}>
@@ -84,6 +90,7 @@ const Terminal = () => {
         onKeyDown={handleKeyPress}
         autoFocus
       />
+      
       {/* Histórico de comandos e respostas */}
       {history.map((item, index) => (
         <div key={index}>
