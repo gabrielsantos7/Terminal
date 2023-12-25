@@ -27,14 +27,18 @@ const TypingEffect = () => {
       if (charIndex === text.length) {
         clearInterval(typingInterval);
       }
-    }, 5);
+    }, 1);
 
     return () => {
       clearInterval(typingInterval);
     };
   }, [text]);
 
-  return <div className='response'><span className='command'>{displayText}</span></div>;
+  return (
+    <div className='response'>
+      <span className='command'>{displayText}</span>
+    </div>
+  );
 };
 
 export default TypingEffect;

@@ -1,1 +1,1 @@
-export const commands: string[] = ['help', 'clear', 'banner'];
+export const commands: string[] = ['help', 'clear', 'banner', 'whois'];

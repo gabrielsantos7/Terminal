@@ -5,6 +5,7 @@ import { findCommand } from '../helper';
 import Help from './CommandResponses/Help';
 import NotFound from './CommandResponses/NotFound';
 import Banner from './CommandResponses/Banner';
+import Whois from './CommandResponses/Whois';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
@@ -52,6 +53,13 @@ const Terminal = () => {
             setHistory((prevHistory) => [
               ...prevHistory,
               { command: trimmedInput, response: <Banner /> },
+            ]);
+            break;
+
+          case 'whois':
+            setHistory((prevHistory) => [
+              ...prevHistory,
+              { command: trimmedInput, response: <Whois /> },
             ]);
             break;
 
