@@ -8,12 +8,10 @@ export const getCurrentTime = (): string => {
   const now: Date = new Date();
   let hours: number | string = now.getHours();
   let minutes: number | string = now.getMinutes();
-  let seconds: number | string = now.getSeconds();
 
   hours = (hours < 10 ? '0' : '') + hours;
   minutes = (minutes < 10 ? '0' : '') + minutes;
-  seconds = (seconds < 10 ? '0' : '') + seconds;
 
-  const currentTime: string = `${hours}:${minutes}:${seconds}`;
+  const currentTime: string = `${hours}:${minutes}`;
   return currentTime;
 };

@@ -1,17 +1,15 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Username from './Username';
-
-import { findCommand } from '../helper';
+import { findCommand, getCurrentTime } from '../helper';
 import Help from './CommandResponses/Help';
 import NotFound from './CommandResponses/NotFound';
 import Banner from './CommandResponses/Banner';
 import Whois from './CommandResponses/Whois';
+import { ICommandHistory } from '../models';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [history, setHistory] = useState<
-    { command: string; response: JSX.Element | null }[]
-  >([]);
+  const [history, setHistory] = useState<ICommandHistory[]>([]);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -34,61 +32,50 @@ const Terminal = () => {
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputText.trim();
-      const matchedCommand = findCommand(trimmedInput);
+      const timestamp = getCurrentTime(); // Obtém a data e hora atual
 
-      if (matchedCommand) {
+      if (trimmedInput) {
+        let response: JSX.Element | null = null;
+        const matchedCommand = findCommand(trimmedInput);
+
         switch (matchedCommand) {
           case 'help':
-            setHistory((prevHistory) => [
-              ...prevHistory,
-              { command: trimmedInput, response: <Help /> },
-            ]);
+            response = <Help />;
             break;
-
           case 'clear':
             setHistory([]);
             break;
-
           case 'banner':
-            setHistory((prevHistory) => [
-              ...prevHistory,
-              { command: trimmedInput, response: <Banner /> },
-            ]);
+            response = <Banner />;
             break;
-
           case 'whois':
-            setHistory((prevHistory) => [
-              ...prevHistory,
-              { command: trimmedInput, response: <Whois /> },
-            ]);
+            response = <Whois />;
             break;
-
           default:
-            setHistory((prevHistory) => [
-              ...prevHistory,
-              { command: trimmedInput, response: null },
-            ]);
+            response = <NotFound />;
             break;
         }
-      } else {
-        setHistory((prevHistory) => [
-          ...prevHistory,
-          { command: trimmedInput, response: <NotFound /> },
-        ]);
+
+        const commandObj: ICommandHistory = {
+          command: trimmedInput,
+          response,
+          timestamp,
+        };
+
+        setHistory((prevHistory) => [...prevHistory, commandObj]);
+        setInputText('');
+
+        setTimeout(() => {
+          window.scrollTo(0, document.body.offsetHeight);
+        }, 50);
       }
-
-      setInputText('');
-
-      setTimeout(() => {
-        window.scrollTo(0, document.body.offsetHeight);
-      }, 50);
     }
   };
 
   return (
     <div id='terminal-container' onClick={textareaFocus}>
       <p className='color-main-yellow'>
-      Web Terminal project © 2024. All right reserved.
+        Web Terminal project © 2024. All right reserved.
       </p>
       <textarea
         ref={textAreaRef}
@@ -100,13 +87,14 @@ const Terminal = () => {
       {/* Histórico de comandos e respostas */}
       {history.map((item, index) => (
         <div key={index}>
-          <Username />
+          <Username currentTime={item.timestamp} />
           <span className='color-white'>{item.command}</span>
-          {item.response && <span>{item.response}</span>}
+          {<span>{item.response}</span>}
         </div>
       ))}
+
       {/* Último comando digitado */}
-      <Username />
+      <Username currentTime={getCurrentTime()} />
       <span className='color-white'>
         {!!inputText.length ? inputText.trim() : inputText}
       </span>{' '}

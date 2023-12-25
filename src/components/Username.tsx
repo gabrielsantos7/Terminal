@@ -1,9 +1,10 @@
-import { getCurrentTime } from "../helper";
+import { IUsernameProps } from "../models";
 
-const Username = () => {
+
+const Username = ({currentTime}: IUsernameProps) => {
   return (
     <>
-      <span className='datetime color-white'>{getCurrentTime()}</span>
+      <span className='datetime color-white'>{currentTime}</span>
       <span className='username'>
         visitor@terminal.com:<span className='color-main-blue'>~</span>
         <span className='color-white'>$</span>
