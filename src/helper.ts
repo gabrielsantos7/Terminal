@@ -1,6 +1,5 @@
-import { commands } from "./commands";
-import { ICommand } from "./models";
+import { commands } from './commands';
 
-export const findCommand = (input: string): ICommand | undefined => {
-  return commands.find((cmd) => cmd.name === input);
+export const findCommand = (input: string): string | undefined => {
+  return commands.find((cmd) => cmd === input);
 };

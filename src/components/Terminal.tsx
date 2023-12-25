@@ -1,12 +1,12 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Username from './Username';
 
-import { commands } from '../commands';
 import { findCommand } from '../helper';
+import Help from './CommandResponses/Help';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<{ command: string; response: JSX.Element | null }[]>([]);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -31,14 +31,22 @@ const Terminal = () => {
       const trimmedInput = inputText.trim()
       const matchedCommand = findCommand(trimmedInput);
 
-    if (matchedCommand) {
-      matchedCommand.action();
-    } else {
-      console.log(`Comando '${inputText}' não reconhecido.`);
-    }
-      setHistory((prevHistory) => [...prevHistory, trimmedInput]);
-      
-      setInputText('');
+      if (matchedCommand) {
+
+        switch (matchedCommand) {
+          case 'help':
+            setHistory((prevHistory) => [...prevHistory, { command: trimmedInput, response: <Help /> }]);
+            break;
+
+          default:
+            setHistory((prevHistory) => [...prevHistory, { command: trimmedInput, response: null }]);
+            break;
+        }
+
+        setInputText('');
+      } else {
+        console.log(`Comando '${inputText}' não reconhecido.`);
+      }
     }
   };
 
@@ -53,14 +61,17 @@ const Terminal = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
       />
-      
-      {history.map((command, index) => (
+
+      {/* Histórico de comandos e respostas */}
+      {history.map((item, index) => (
         <div key={index}>
           <Username />
-          <span className='color-white'>{command}</span>
+          <span className='color-white'>{item.command}</span>
+          {item.response && <span>{item.response}</span>}
         </div>
       ))}
 
+      {/* Último comando digitado */}
       <Username />
       <span className='color-white'>{!!inputText.length ? inputText.trim() : inputText}</span> <span id='typer'></span>
     </div>
