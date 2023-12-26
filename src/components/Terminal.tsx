@@ -11,9 +11,8 @@ import Secret from './CommandResponses/Secret';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [combinedHistory, setCombinedHistory] = useState<
-    (ICommandHistory | ISecretHistory)[]
-  >([]);
+  const [history, setHistory] = useState<ICommandHistory[]>([]);
+  const [secretHistory, setSecretHistory] = useState<ISecretHistory[]>([]);
   const [showSecret, setShowSecret] = useState<boolean>(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -22,6 +21,11 @@ const Terminal = () => {
       textareaFocus();
     }, 50);
   }, []);
+
+  useEffect(() => {
+    console.log(history);
+  }, [history]);
+  
 
   const textareaFocus = () => {
     if (textAreaRef.current) {
@@ -53,7 +57,7 @@ const Terminal = () => {
       case 'help':
         return <Help />;
       case 'clear':
-        setCombinedHistory([]);
+        setHistory([]);
         return null;
       case 'banner':
         return <Banner />;
@@ -62,12 +66,13 @@ const Terminal = () => {
       case 'projects':
         return <Projects />;
       case 'secret':
-        setShowSecret(true);
-        return null;
+        setShowSecret(true)
+        return <Secret setShowSecret={setShowSecret} showSecret={true} setSecretHistory={setSecretHistory} />;
       default:
         return <NotFound />;
     }
   };
+  
 
   const addToHistory = (
     command: string,
@@ -79,14 +84,22 @@ const Terminal = () => {
       response,
       timestamp,
     };
-
-    setCombinedHistory((prevHistory) => [...prevHistory, commandObj]);
+  
+    // Usa uma função de callback para obter o estado anterior atualizado
+    setHistory((prevHistory) => {
+      return [...prevHistory, commandObj];
+    });
+  
     setInputText('');
-
+  
+    console.log(history);
+  
     setTimeout(() => {
       window.scrollTo(0, document.body.offsetHeight);
     }, 50);
   };
+  
+  
 
   return (
     <div id='terminal-container' onClick={textareaFocus}>
@@ -102,32 +115,38 @@ const Terminal = () => {
       />
 
       {/* Histórico de comandos e respostas */}
-      {combinedHistory.map((item, index) => (
+      {history.map((item, index) => (
         <div key={index}>
-          {'timestamp' in item ? (
+          {item.command === 'secret' ? (
+            secretHistory.map((secretItem, secretIndex) => (
+              <div key={`secret-${secretIndex}`}>
+                <span>Find the password: </span>
+                <span className='color-white'>{secretItem.attempt}</span> <br />
+                <span
+                  className={
+                    secretItem.result.includes('Wrong') ? 'color-main-red' : ''
+                  }
+                >
+                  {secretItem.result}
+                </span>
+              </div>
+            ))
+          ) : (
             <>
               <Username currentTime={item.timestamp} />
               <span className='color-white'>{item.command}</span>
               {item.response && <span>{item.response}</span>}
             </>
-          ) : (
-            <div>
-              <span>Find the password: {item.attempt}</span>
-              <br />
-              <span
-                className={
-                  item.result.includes('Wrong') ? 'color-main-red' : ''
-                }
-              >
-                {item.result}
-              </span>
-            </div>
           )}
         </div>
       ))}
 
       {showSecret && (
-        <Secret setShowSecret={setShowSecret} showSecret={showSecret} />
+        <Secret
+          setShowSecret={setShowSecret}
+          showSecret={showSecret}
+          setSecretHistory={setSecretHistory}
+        />
       )}
 
       {/* Último comando digitado */}

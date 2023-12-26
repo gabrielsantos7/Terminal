@@ -3,8 +3,9 @@ export interface IUsernameProps {
 }
 
 export interface ISecretProps {
-  showSecret: boolean,
+  showSecret: boolean;
   setShowSecret: (showSecret: boolean) => void;
+  setSecretHistory: (secretHistory: ISecretHistory[]) => void;
 }
 
 export interface ISecretHistory {

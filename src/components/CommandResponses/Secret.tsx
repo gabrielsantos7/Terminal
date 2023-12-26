@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
-import { ISecretProps } from '../../models';
+import { ISecretHistory, ISecretProps } from '../../models';
 
-const Secret = ({ showSecret, setShowSecret }: ISecretProps) => {
+const Secret = ({
+  showSecret,
+  setShowSecret,
+  setSecretHistory,
+}: ISecretProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [outputValue, setOutputValue] = useState<string>('');
   const [password] = useState<string>('password');
   const [mask, setMask] = useState<string>('');
   const [attempts, setAttempts] = useState<number>(3);
-  const [history, setHistory] = useState<{ attempt: string; result: string }[]>(
+  const [history, setHistory] = useState<ISecretHistory[]>(
     [],
   );
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -23,6 +27,7 @@ const Secret = ({ showSecret, setShowSecret }: ISecretProps) => {
       setOutputValue(
         'You have exceeded the maximum number of attempts. Please try again later.',
       );
+      setSecretHistory([...history]);
       setShowSecret(false);
     }
   }, [attempts]);
@@ -45,8 +50,11 @@ const Secret = ({ showSecret, setShowSecret }: ISecretProps) => {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
-      if (inputValue.toLowerCase() === password) {
+      if (inputValue.toLowerCase().trim() === password) {
         setOutputValue('Congratulations! You have guessed the password.');
+        setShowSecret(false);
+        setInputValue('');
+        setMask('');
       } else {
         const resultMessage = `Wrong password. ${
           attempts - 1
