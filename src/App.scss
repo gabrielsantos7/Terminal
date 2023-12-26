@@ -10,7 +10,7 @@ textarea {
   position: absolute;
 }
 
-#typer::before {
+.typer::before {
   content: '';
   width: 50px;
   height: 50px;
@@ -34,4 +34,3 @@ textarea {
 .datetime, .username, .project-description {
   padding-right: 1.5rem;
 }
-

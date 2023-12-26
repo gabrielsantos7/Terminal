@@ -5,12 +5,16 @@ import Help from './CommandResponses/Help';
 import NotFound from './CommandResponses/NotFound';
 import Banner from './CommandResponses/Banner';
 import Whois from './CommandResponses/Whois';
-import { ICommandHistory } from '../models';
+import { ICommandHistory, ISecretHistory } from '../models';
 import Projects from './CommandResponses/Projects';
+import Secret from './CommandResponses/Secret';
 
 const Terminal = () => {
   const [inputText, setInputText] = useState<string>('');
-  const [history, setHistory] = useState<ICommandHistory[]>([]);
+  const [combinedHistory, setCombinedHistory] = useState<
+    (ICommandHistory | ISecretHistory)[]
+  >([]);
+  const [showSecret, setShowSecret] = useState<boolean>(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -33,8 +37,8 @@ const Terminal = () => {
   const handleKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputText.trim().toLowerCase();
-      const timestamp = getCurrentTime(); // Obtém a data e hora atual
-  
+      const timestamp = getCurrentTime();
+
       if (trimmedInput) {
         const response = getCommandResponse(trimmedInput);
         addToHistory(trimmedInput, response, timestamp);
@@ -43,13 +47,13 @@ const Terminal = () => {
       }
     }
   };
-  
+
   const getCommandResponse = (command: string): JSX.Element | null => {
     switch (findCommand(command)) {
       case 'help':
         return <Help />;
       case 'clear':
-        setHistory([]);
+        setCombinedHistory([]);
         return null;
       case 'banner':
         return <Banner />;
@@ -57,29 +61,32 @@ const Terminal = () => {
         return <Whois />;
       case 'projects':
         return <Projects />;
+      case 'secret':
+        setShowSecret(true);
+        return null;
       default:
         return <NotFound />;
     }
   };
-  
+
   const addToHistory = (
     command: string,
     response: JSX.Element | null,
-    timestamp: string
+    timestamp: string,
   ) => {
     const commandObj: ICommandHistory = {
       command,
       response,
       timestamp,
     };
-  
-    setHistory((prevHistory) => [...prevHistory, commandObj]);
+
+    setCombinedHistory((prevHistory) => [...prevHistory, commandObj]);
     setInputText('');
-  
+
     setTimeout(() => {
       window.scrollTo(0, document.body.offsetHeight);
     }, 50);
-  };  
+  };
 
   return (
     <div id='terminal-container' onClick={textareaFocus}>
@@ -95,20 +102,44 @@ const Terminal = () => {
       />
 
       {/* Histórico de comandos e respostas */}
-      {history.map((item, index) => (
+      {combinedHistory.map((item, index) => (
         <div key={index}>
-          <Username currentTime={item.timestamp} />
-          <span className='color-white'>{item.command}</span>
-          {<span>{item.response}</span>}
+          {'timestamp' in item ? (
+            <>
+              <Username currentTime={item.timestamp} />
+              <span className='color-white'>{item.command}</span>
+              {item.response && <span>{item.response}</span>}
+            </>
+          ) : (
+            <div>
+              <span>Find the password: {item.attempt}</span>
+              <br />
+              <span
+                className={
+                  item.result.includes('Wrong') ? 'color-main-red' : ''
+                }
+              >
+                {item.result}
+              </span>
+            </div>
+          )}
         </div>
       ))}
 
+      {showSecret && (
+        <Secret setShowSecret={setShowSecret} showSecret={showSecret} />
+      )}
+
       {/* Último comando digitado */}
-      <Username currentTime={getCurrentTime()} />
-      <span className='color-white'>
-        {!!inputText.length ? inputText.trim() : inputText}
-      </span>{' '}
-      <span id='typer'></span>
+      {!showSecret && (
+        <>
+          <Username currentTime={getCurrentTime()} />
+          <span className='color-white'>
+            {!!inputText.length ? inputText.trim() : inputText}
+          </span>{' '}
+          <span className='typer'></span>
+        </>
+      )}
     </div>
   );
 };
